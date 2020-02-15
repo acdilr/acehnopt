@@ -1,11 +1,18 @@
 <template>
   <div id="app">
-    {{ message }}
+      <h1>
+        {{ message }}
+      </h1>
+    <Counter/>
   </div>
 </template>
 
 <script>
+import Counter from './components/Counter.vue'
 export default {
+  components: {
+   Counter
+  },
   data() {
     return {
       message: 'Hello World',
