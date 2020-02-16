@@ -37,5 +37,4 @@ export default {
 </script>
 
 <style>
-font-size: 99px;
 </style>
