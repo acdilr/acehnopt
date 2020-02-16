@@ -9,6 +9,17 @@
     <span>░</span>
     <span>░</span>
     <span>░</span>
+    <hr>
+      <span v-for="ff in flipflops">
+        <span v-if="ff">▓</span>
+        <span v-else>░</span>
+      </span>
+      <hr>
+      <span v-for="bit in output">
+        <span v-if="bit">▓</span>
+        <span v-else>░</span>
+      </span>
+
   </div>
 </template>
 
@@ -16,18 +27,14 @@
 export default {
   data() {
     return {
-      count: 0
+      count: 0,
+      flipflops: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      taps: [0, 0, 0, 0,
+             0, 0, 0, 0,
+             0, 0, 1, 0,
+             1, 1, 0, 1],
+      output: [],
     };
-  },
-  computed: {
-    keymap() {
-      return {
-        "left": this.decrease,
-        "a": this.decrease,
-        "d": this.increase,
-        "right": this.increase,
-      }
-    }
   },
   methods: {
     decrease() {
@@ -35,6 +42,24 @@ export default {
     },
     increase() {
       this.count += 1
+      var x = []
+      var val
+      for (let i in this.flipflops) {
+        if (i == 0) {
+          val = 0
+          for (let tapIndex in this.taps) {
+            if (this.taps[tapIndex]) {
+              val ^= this.flipflops[tapIndex]
+            }
+          }
+        } else {
+          val = this.flipflops[i - 1]
+        }
+        x.push(val)
+      }
+      this.output.push(this.flipflops[this.flipflops.length - 1])
+      this.flipflops = x
+      console.log(x)
     }
   }
 };
