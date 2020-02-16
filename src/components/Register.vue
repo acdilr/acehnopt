@@ -1,5 +1,10 @@
 <template>
   <div>
+    <div>
+      <button v-shortkey="['a']" @shortkey='decrease()' v-on:click='decrease()'>-</button>
+      {{ count }}
+      <button v-shortkey="['d']" @shortkey='increase()' v-on:click="increase()">+</button>
+    </div>
     <span>▓</span>
     <span>░</span>
     <span>░</span>

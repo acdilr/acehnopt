@@ -1,11 +1,8 @@
 <template>
   <div>
-    <span v-hotkey="keymap">
-      a and d to control
-    </span>
-  <button v-on:click="count++">
-    You clicked me {{ count }} times.
-  </button> </div>
+    <button v-shortkey="['a']" @shortkey='count--' v-on:click='count--'>-</button>
+    {{ count }}
+    <button v-shortkey="['d']" @shortkey='count++' v-on:click="count++">+</button> </div>
 </template>
 
 <script>
