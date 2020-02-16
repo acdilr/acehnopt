@@ -5,15 +5,19 @@
       </h1>
       <span v-hotkey="keymap" v-show="show"> Press `ctrl + esc` to toggle me! Hold `enter` to hide me! </span>
     <Counter/>
+    <hr>
+    <Register/>
   </div>
 </template>
 
 <script>
 import Counter from './components/Counter.vue'
+import Register from './components/Register.vue'
 
 export default {
   components: {
-   Counter
+   Counter,
+   Register,
   },
   data() {
     return {
