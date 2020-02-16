@@ -1,7 +1,5 @@
 <template>
   <div>
-    <span v-hotkey="keymap"/>
-
     <span>▓</span>
     <span>░</span>
     <span>░</span>
