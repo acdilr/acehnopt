@@ -5,7 +5,7 @@
       <span v-shortkey="['arrowright']" @shortkey='increase()'/>
       <button v-shortkey="['d']" @shortkey='increase()' v-on:click="increase()">+</button>
       {{ count }}
-      <button v-shortkey="['space']" @shortkey='init()' v-on:click="init()">Init</button>
+      <button v-if="count < 1152" v-shortkey="['space']" @shortkey='init()' v-on:click="init()">Init</button>
     </div>
     <div class="registers" id="trivium">
       <span :class="test[index]" v-for="(register, index) in registers">
