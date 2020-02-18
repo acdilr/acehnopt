@@ -47,16 +47,21 @@ export default {
     registers[0][0] = 1
     registers[0][1] = 1
     registers[0][2] = 1
+    registers[0][64] = 1
     for (let i = 3; i < 20; i++) {
       registers[1][i] = 1
     }
+
     return {
       count: 0,
       registers,
       output: [],
       registerOutputs: [],
-      test: ["register-a", "register-b", "register-c"]
+      test: ["register-a", "register-b", "register-c", "trivium"]
     };
+  },
+  created: function() {
+    this.getOutputs()
   },
   methods: {
     decrease() {
@@ -65,6 +70,34 @@ export default {
     init() {
       this.increase(1152 - this.count)
       this.output = []
+    },
+    getOutputs() {
+      // Sanity checks for this gnarly bit:
+      //  Each output is fed by its own register
+      //  Each register input is fed by
+      //     - the preceding output, and
+      //     - one of its flipflops
+      var outputs = [0, 0, 0]
+      outputs[2] ^= (this.registers[2][108] & this.registers[2][109])
+      outputs[2] ^= this.registers[2][110]
+      outputs[2] ^= this.registers[2][65]
+      // The first (as in 1) flipflop on Register B takes:
+      //   - the 78th (remember the 1-index) flipflop in B
+      //   - the output of Register A, which is as follows:
+      //      = the 66th (remember the 1-index) flipflop of A
+      //      = antepenultimate & penultimate flipflop of A (yes, a bit and)
+      //      = the ultimate flipflop of A. # 93 in a 1-index.
+      outputs[0] ^= (this.registers[0][90] & this.registers[0][91])
+      outputs[0] ^= this.registers[0][92]
+      outputs[0] ^= this.registers[0][65]
+
+      outputs[1] ^= (this.registers[1][81] & this.registers[1][82])
+      outputs[1] ^= this.registers[1][83]
+      outputs[1] ^= this.registers[1][68]
+
+      outputs.push(outputs.reduce((acc, val) => acc ^ val, 0)) // sorry
+
+      this.registerOutputs = outputs
     },
     increase(count=1) {
       for (let n=0; n < count; n++) {
@@ -89,36 +122,11 @@ export default {
           var register = Array()
           for (let ffIndex in this.registers[registerIndex]) {
             if (ffIndex == 0) {
-              // Sanity checks for this gnarly bit:
-              //  Each output is fed by its own register
-              //  Each register input is fed by
-              //     - the preceding output, and
-              //     - one of its flipflops
-              if (registerIndex == 0) {
-                outputs[2] ^= (this.registers[2][108] & this.registers[2][109])
-                outputs[2] ^= this.registers[2][110]
-                outputs[2] ^= this.registers[2][65]
-                val = outputs[2] ^ this.registers[0][68]
-              } else if (registerIndex == 1) {
-                // The first (as in 1) flipflop on Register B takes:
-                //   - the 78th (remember the 1-index) flipflop in B
-                //   - the output of Register A, which is as follows:
-                //      = the 66th (remember the 1-index) flipflop of A
-                //      = antepenultimate & penultimate flipflop of A (yes, a bit and)
-                //      = the ultimate flipflop of A. # 93 in a 1-index.
-                outputs[0] ^= (this.registers[0][90] & this.registers[0][91])
-                outputs[0] ^= this.registers[0][92]
-                outputs[0] ^= this.registers[0][65]
-                val = outputs[0] ^ this.registers[1][77]
-              } else if (registerIndex == 2) {
-                outputs[1] ^= (this.registers[1][81] & this.registers[1][82])
-                outputs[1] ^= this.registers[1][83]
-                outputs[1] ^= this.registers[1][68]
-                val = outputs[1] ^ this.registers[2][86] // let's go with coincidence. sure.
-              }
-              //sourceRegister = Math.abs((registerIndex + this.registers.length - 1) % this.registers.length)
-              //sourceFlipflop = this.registers[sourceRegister].length - 1
-              //val ^= this.registers[sourceRegister][sourceFlipflop]
+              val = 0 // we're getting back to this!
+              // this is a little awkward because we're allocating the array
+              // and initializing its values simultaneously.
+              // and it's easier to write this than it is to refactor this.
+              // but you! why aren't you refactoring it?
             } else {
               sourceRegister = registerIndex
               sourceFlipflop = ffIndex - 1
@@ -128,11 +136,16 @@ export default {
           }
           registers.push(register)
         }
+        // this is when we got back to it.
+        registers[0][0] = this.registerOutputs[2] ^ this.registers[0][68]
+        registers[1][0] = this.registerOutputs[0] ^ this.registers[1][77]
+        registers[2][0] = this.registerOutputs[1] ^ this.registers[2][86] // let's go with coincidence. sure.
         // xor the register outputs for the net.
-        this.output.push(outputs.reduce((acc, val) => acc ^ val, 0)) // sorry
+        this.output.push(this.registerOutputs[3]) // still sorry
 
         this.registers = registers
-        this.registerOutputs = outputs
+
+        this.getOutputs()
       }
     }
   }
@@ -144,13 +157,30 @@ export default {
   color: red;
   /* float: right; */
 }
-.register-b {
-  color: green;
-  /* float: right; */
+#register-a-68 {
+  color: coral;
 }
-.register-c {
-  color: blue;
-  /* float: right; */
+#register-a-0 {
+  /* c-output + a-68 =~ blue + red ? */
+  color: purple
+}
+#register-b-77 {
+  color: chartreuse;
+}
+#register-b-0 {
+  /* a-output + b-77 =~ red + green ? */
+  color: yellow
+}
+#register-c-86 {
+  color: darkcyan;
+}
+#register-c-0 {
+  /* b-output + c-86 =~ blue + green ? */
+  color: cyan;
+}
+
+#trivium-output {
+  color: darkgrey;
 }
 .registers {
   font-size: 10px;
