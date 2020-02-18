@@ -1,13 +1,13 @@
 {
   "name": "acehnopt",
   "version": "1.0.0",
-  "description": "A writhing [monochromatic] display",
+  "description": "A writhing [lochromatic] display",
   "main": "index.js",
   "scripts": {
     "serve": "webpack-dev-server --mode development"
   },
   "author": "hior",
-  "license": "SEE LICENSE IN spoken",
+  "license": "spoken word licensing",
   "devDependencies": {
     "@babel/core": "^7.8.4",
     "@babel/preset-env": "^7.8.4",
