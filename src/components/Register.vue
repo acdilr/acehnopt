@@ -9,13 +9,13 @@
     </div>
     <div class="registers" id="trivium">
       <span :class="test[index]" v-for="(register, index) in registers">
-        <span v-bind:id="test[index] + '-' + ffIndex" v-for="(ff, ffIndex) in register">
-          <span  v-if="ff">▓</span>
+        <span v-bind:id="test[index] + '-' + ffIndex" class="register"
+          v-for="(ff, ffIndex) in register">
+          <span v-if="ff">▓</span>
           <span v-else>░</span>
         </span>
-        <br>
       </span>
-
+<br><br><br>
       <span id="abc" class="output" v-for="(output, index) in registerOutputs">
         <div v-bind:id="test[index] + '-output'">
           <span :id="output" v-if="output">▓</span>
@@ -152,7 +152,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 #register-a-output, #register-a-65, #register-a-90, #register-a-91, #register-a-92 {
   color: red;
   /* float: right; */
@@ -186,5 +186,54 @@ export default {
   font-size: 10px;
   word-wrap: anywhere;
   width: 1000px;
+  margin-bottom: 128px;
+}
+@mixin rotated-text($register-name, $num-letters: 100, $angle-span: 180deg, $angle-offset: 0deg) {
+  $angle-per-char: $angle-span / $num-letters;
+  @for $i from 0 through $num-letters {
+    ##{$register-name}-#{$i} {
+      @include transform(rotate($angle-offset + $angle-per-char * $i))
+    }
+  }
+}
+@mixin transform($property) {
+  -webkit-transform: $property;
+  -ms-transform: $property;
+  transform: $property;
+}
+#trivium {
+  padding-left: 400px; // fitting the whole circle in.
+}
+.register {
+  // display: inline-block;
+  // margin-bottom: 128px;
+  font: 10px Monaco, MonoSpace;
+  height: 400px; // the radius
+  position: absolute;
+  // width: 20px;
+  left: 0;
+  top: 0;
+  transform-origin: bottom center;
+}
+.register-a {
+  position: relative;
+  width: 400px;
+  border-radius: 50%;
+  transform: rotate(-50deg);
+  @include rotated-text(register-a, 93, 93/288*360deg, 0deg)
+}
+.register-b {
+  position: relative;
+  width: 400px;
+  border-radius:50%;
+  transform: rotate(-50deg);
+  @include rotated-text(register-b, 84, 84/288*360deg, 93/288*360deg)
+}
+.register-c {
+  position: relative;
+  width: 400px;
+  border-radius:50%;
+  transform: rotate(-50deg);
+  @include rotated-text(register-c, 111, 111/288*360deg, (93+84)/288*360deg)
 }
 </style>
